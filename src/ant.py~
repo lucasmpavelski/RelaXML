@@ -1,0 +1,27 @@
+import pygame
+from utils import *
+
+class Ant (pygame.sprite.Sprite) :
+    def __init__ (self) :
+        pygame.sprite.Sprite.__init__(self)
+        self.image, self.rect = load_img("ant.gif")
+
+        self.walking = True
+        self.carring_food = False
+        self.initial_position = (0, 0)
+        self.angle = 180
+
+    def _spin(self):
+        "spin the monkey image"
+        center = self.rect.center
+        self.dizzy += 12
+        if self.angle >= 360:
+            self.angle = 0
+            self.image = self.original
+        else:
+            rotate = pygame.transform.rotate
+            self.image = rotate(self.original, self.dizzy)
+        self.rect = self.image.get_rect(center=center)
+
+    def update (self) :
+        pass

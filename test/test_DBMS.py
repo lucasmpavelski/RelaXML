@@ -37,7 +37,6 @@ class TestDBMS (unittest.TestCase) :
         del d
 
         d = DBMS(self.name, self.path)
-        print d.config_xml.toxml()
         self.assertEqual(names, d.databases.keys(), "DBMS has not open config file properly")
 
         d.clear()
@@ -47,8 +46,10 @@ class TestDBMS (unittest.TestCase) :
 
         self.d.createDatabase("nha")
         self.assertTrue("nha" in os.listdir(self.d.path), "DBMS has not created the database dir")
+        self.assertTrue("nha" in self.d.showDatabases(), "DBMS has not created the database")
         self.d.dropDatabase("nha")
         self.assertFalse("nha" in os.listdir(self.d.path), "DBMS has not destroyed the database dir")
+        self.assertFalse("nha" in self.d.showDatabases(), "DBMS has not dropped the database")
    
         self.d.clear()
 

@@ -11,13 +11,12 @@ class DBMS :
         self.name = name
         self.location = location
         self.path = os.path.join(location, name)
+        self.config_path = os.path.join(self.path, 'config.xml')
         self.databases = {}
-        print name, os.listdir(location)
         if (name not in os.listdir(location)) :
             self._write()
         else :
             self._open()
-            print 'opened'
 
     def _save_config (self) :
         config_file = open(self.config_path, 'w')
@@ -26,7 +25,6 @@ class DBMS :
 
     def _write (self) :
         os.mkdir(self.path)
-        self.config_path = os.path.join(self.path, 'config.xml')
         self.config_xml = Document()
 
         doc = self.config_xml
@@ -38,9 +36,7 @@ class DBMS :
         self._save_config()
 
     def _open (self) :
-        self.config_path = os.path.join(self.path, 'config.xml')
         self.config_xml = minidom.parse(self.config_path)
-        print self.config_xml.toxml()
 
         names = self.config_xml.getElementsByTagName("databases")[0].childNodes
         for nm in names :
@@ -67,5 +63,10 @@ class DBMS :
         del self.databases[name]
 
     def showDatabases (self) :
-        for db in self.databases :
-            print db
+        r = ""
+        for name in self.databases.keys() :
+            r = r + name + "\n"
+        return r
+
+    def useDatabase (self, name) :
+        return self.databases[name]

@@ -10,6 +10,7 @@ class Database :
         self.location = location
         self.path = os.path.join(location, name)
         self.config_path = os.path.join(self.path, "config.xml")
+	self.tables = {}
         if (name not in os.listdir(location)) :
             self._write()
 
@@ -33,15 +34,20 @@ class Database :
         database.appendChild(tables)
 
         self._save_config()
+
+    def _open (self) :
+        pass
     
     def drop (self) :
         shutil.rmtree(self.path)
 
     def createTable (name) :
-        pass
+        self.tables[name] = Table(name, self.path)
 
     def dropTable (name) :
-        pass
+	del self.tables[name]
 
     def showTables () :
-        pass
+        r = ""
+        for name in self.tables.keys() :
+        r = r + name + "\n"

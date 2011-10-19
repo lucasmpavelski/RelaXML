@@ -5,7 +5,7 @@ import xml.dom.minidom as minidom
 
 from DBMS import DBMS
 
-class TestDBMS (unittest.TestCase) :
+class TestDatabase (unittest.TestCase) :
 
     def setUp (self) :
         self.path = 'test/dump'
@@ -17,8 +17,12 @@ class TestDBMS (unittest.TestCase) :
         self.d.clear()
         shutil.rmtree(self.path)
 
-    def testUseDatabase (self) :
+    def testOpenUseDatabase (self) :
         self.d.createDatabase("test")
+	del self.d
+
+	self.d = DBMS(self.name, self.path)
+
         db = self.d.useDatabase("test")
         self.assertEqual(db.name, "test", "DBMS has not returned database correctly")
 

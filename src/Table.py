@@ -50,8 +50,9 @@ class Table :
 
 	self.columns_xml = doc.getElementsByTagName("columns")[0]
 	for col_e in self.columns_xml.childNodes :
-	    name = col_e.getElementsByTagName("name")[0].childNodes[0].data
-	    type = col_e.getElementsByTagName("type")[0].childNodes[0].data
+	    name = col_e.getAttribute("name")
+	    type = col_e.getAttribute("type")
+
 	    self.columns[name] = Column(name, type)
 
     def setColumns (self, columns) :
@@ -60,19 +61,9 @@ class Table :
 	doc = self.xml
 	for col_name, col_type in self.columns.iteritems() :
 	    col_el = doc.createElement("column")
-
-	    col_nm = doc.createElement("name")
-	    col_ntx = doc.createTextNode(col_name)
-	    col_nm.appendChild(col_ntx)
-	    col_el.appendChild(col_nm)
-
-	    col_tp = doc.createElement("type")
-	    col_ttx = doc.createTextNode(col_type)
-	    col_tp.appendChild(col_ttx)
-	    col_el.appendChild(col_tp)
-
+	    col_el.setAttribute("name", col_name)
+	    col_el.setAttribute("type", col_type)
 	    self.columns_xml.appendChild(col_el)
-	
 	self._save_xml()
 
     def _live (self) :

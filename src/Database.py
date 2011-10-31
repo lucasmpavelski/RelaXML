@@ -3,6 +3,7 @@ import shutil
 import xml.dom.minidom as minidom
 from xml.dom.minidom import Document
 
+from Table import Table
 
 class Database :
 
@@ -36,33 +37,37 @@ class Database :
         database.appendChild(name)
 
         self.tables_xml = doc.createElement("tables")
-        database.appendChild(tables_xml)
+        database.appendChild(self.tables_xml)
 
         self._save_config()
 
     def _open (self) :
-	self.config_xml = minidom.parse(self.path)
-	doc = self.confin_xml
+	self.config_xml = minidom.parse(self.config_path)
+	doc = self.config_xml
 
 	self.name = doc.getElementsByTagName("name")[0].childNodes[0].data
 
         self.tables_xml = doc.getElementsByTagName("tables")[0]
 	for table_e in self.tables_xml.childNodes :
-	    name = table_e.getElementsByTagName("name")[0].childNodes[0].data
+	    print table_e.toprettyxml()
+	    name = table_e.getAttribute("name")
 	    self.tables[name] = Table(name, self.path)
-    
+
     def drop (self) :
         shutil.rmtree(self.path)
 
-    def createTable (name) :
+    def createTable (self, name, columns) :
         doc = self.config_xml
-        self.tables[name] = Table(name, self.path)
 
-	table_e = doc.createElement("name")
-	table_e_nametx = doc.createTextNode(name)
-	table_e.appendChild(table_e_nametx)
+	t = Table(name, self.path)
+	t.setColumns(columns)
+        self.tables[name] = t
 
+	table_e = doc.createElement("table")
+	table_e.setAttribute("name", name)
 	self.tables_xml.appendChild(table_e)
+
+	self._save_config()
 
     def dropTable (name) :
 	del self.tables[name]
@@ -70,4 +75,4 @@ class Database :
     def showTables () :
         r = ""
         for name in self.tables.keys() :
-        r = r + name + "\n"
+		r = r + name + "\n"

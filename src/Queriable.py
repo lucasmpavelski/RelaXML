@@ -1,5 +1,5 @@
 
-class Queriable :
+class Queriable(object) :
     def __init__ (self) :
         pass
     

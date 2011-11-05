@@ -1,8 +1,12 @@
 
 class Column :
-    def __init__ (self, name, type) :
+    def __init__ (self, name, theType) :
         self.name = name
-	self.type = type
+        self.ns_name = name.replace(" ", "_")
+	self.typeName = theType
 
     def like (self, obj) :
-	return type(obj).__name__ == self.type
+        return type(obj).__name__ == self.typeName
+
+    def valueOf (self, objstr) :
+	return eval(self.typeName)(objstr)

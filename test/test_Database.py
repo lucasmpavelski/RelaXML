@@ -40,7 +40,7 @@ class TestDatabase (unittest.TestCase) :
         self.d.createDatabase('test_ct')
         db = self.d.useDatabase('test_ct')
 
-        db.createTable("testtable")
+        db.createTable("testtable", {})
         self.assertTrue("testtable" in db.showTables(), "Database has not created the table")
         db.dropTable("testtable")
         self.assertTrue("testtable" not in db.showTables(), "Database has not dropped the table")

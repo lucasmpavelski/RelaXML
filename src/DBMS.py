@@ -5,6 +5,13 @@ from xml.dom.minidom import Document
 
 from Database import Database
 
+class DatabaseAlreadyExistError :
+    def __init__(self, name):
+        self.name = name
+    def __str__(self):
+        return "Database " + name + " already exists."
+     
+
 class DBMS :
 
     def __init__ (self, name, location = ".") :
@@ -30,31 +37,32 @@ class DBMS :
         doc = self.config_xml
         dbms = doc.createElement("dbms")
         doc.appendChild(dbms)
-        databases = doc.createElement("databases")
-        dbms.appendChild(databases)
+        self.databases_xml = doc.createElement("databases")
+        dbms.appendChild(self.databases_xml)
 
         self._save_config()
 
     def _open (self) :
         self.config_xml = minidom.parse(self.config_path)
+        self.databases_xml = self.config_xml.getElementsByTagName("databases")[0]
 
-        names = self.config_xml.getElementsByTagName("databases")[0].childNodes
-        for nm in names :
-            name = nm.childNodes[0].data
+        dbs = self.databases_xml.childNodes
+        for db in dbs :
+            name = db.getAttribute("name")
             self.databases[name] = Database(name, self.path)
     
     def clear (self) :
         shutil.rmtree(self.path)
 
     def createDatabase (self, name) :
+        if (name in self.databases.keys()) :
+            raise DatabaseAlreadyExistError(name)
         d = Database(name, self.path)
         self.databases[name] = d
 
-        databases = self.config_xml.getElementsByTagName("databases")[0]
-        db_name = self.config_xml.createElement("name")
-        nametx = self.config_xml.createTextNode(name)
-        db_name.appendChild(nametx)
-        databases.appendChild(db_name)
+        db = self.config_xml.createElement("database")
+        db.setAttribute("name", name)
+        self.databases_xml.appendChild(db)
 
         self._save_config()
 

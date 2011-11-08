@@ -13,20 +13,44 @@ if __name__ == '__main__':
 
     #print db.tables["tb_ex"][0]["name"]
 
+
+    #data = [{"col1":13, "col2":4 },
+    #          {"col1":84, "col2":54},
+    #          {"col1":45, "col2":11},
+    #          {"col1":45, "col2":45},
+    #          {"col1":87, "col2":77},
+    #          {"col1":44, "col2":0 },
+    #          {"col1":87, "col2":0 },
+    #          {"col1":84, "col2":5 }]
+
     from Result import Result
+    #r = Result()
+    #r.name = "tab1"
+    #r.columns = ["col1", "col2"]
+    #r.data = data
+    ##print r.orderBy("col2").data
+    ##print r.orderBy("col1").data
+    ##print r.where("col1 == 45").data
 
-    r = Result()
-    data = [{"col1":13, "col2":4 },
-              {"col1":84, "col2":54},
-              {"col1":45, "col2":11},
-              {"col1":45, "col2":45},
-              {"col1":87, "col2":77},
-              {"col1":44, "col2":0 },
-              {"col1":87, "col2":0 },
-              {"col1":84, "col2":5 }]
+    #data2 = [{"col3":43, "col4":1 },
+    #         {"col3":15, "col4":41},
+    #         {"col3":77, "col4":87},
+    #         {"col3":04, "col4":4 },
+    #         {"col3":07, "col4":8 },
+    #         {"col3":54, "col4":8 }]
+    #r2 = Result()
+    #r2.columns = ["col3", "col4"]
+    #r2.data = data2
 
-    r.data = data
-    r.columns = ["col1", "col2"]
-    print r.orderBy("col2").data
-    print r.orderBy("col1").data
-    print r.where("col1 == 45").data
+    r1 = Result()
+    r1.columns = ["c1", "c2"]
+    r1.data = [{"c1": "c1v1", "c2": "c2v1"},
+	       {"c1": "c1v2", "c2": "c2v2"}]
+
+    r2 = Result()
+    r2.columns = ["2c1", "2c2"]
+    r2.data = [{"2c1": "c1v1", "2c2": "c2v1"},
+	       {"2c1": "c1v2", "2c2": "c2v2"}]
+
+    for row in r1.join(r2).where("2c2 == c2").data :
+	print row

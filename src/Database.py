@@ -100,3 +100,10 @@ class Database :
 
     def insertInto (self, tb_name, values) :
         self.tables[tb_name].insert(values)
+
+
+    def fromTables (self, tables) :
+	r = Result()
+	for t in tables :
+	   r.join(t)
+	return r

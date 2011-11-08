@@ -1,6 +1,7 @@
 import os
 import xml.dom.minidom as minidom
 from xml.dom.minidom import Document
+from threading import Timer
 
 from Result import Result
 from Column import Column
@@ -29,6 +30,9 @@ class Table (Result) :
         self.path = os.path.join(location, name + ".xml")
         self.columns = []
         self.col_names = []
+
+        self.life = Timer(10, self._kill)
+
         if (name + ".xml" not in os.listdir(location)) : #Finds a table on database directory.
             self._write() #If not, Creates a new tables.
         else :
@@ -73,8 +77,9 @@ class Table (Result) :
         self.columns_xml = doc.getElementsByTagName("columns")[0]#Returns the node with the columns.
         self.col_n = len(self.columns_xml.childNodes)
         self.columns = [None] * self.col_n
+
         for col_e in self.columns_xml.childNodes : #Scroll through the columns.
-            i = col_e.getAttribute("id") #Read name the columns.
+            i = col_e.getAttribute("id")
             name = col_e.getAttribute("name") #Read name the columns.
             typen = col_e.getAttribute("type") #Read the type the columns.
 
@@ -143,8 +148,7 @@ class Table (Result) :
 
         row = self.xml.createElement("row")
         for col, v in new_row.iteritems() :
-            row.setAttribute(self._column(col).ns_name, str(v))
+            row.setAttribute(self.columns[col].ns_name, str(v))
         self.data_xml.appendChild(row)
 
         self._save_xml()
-

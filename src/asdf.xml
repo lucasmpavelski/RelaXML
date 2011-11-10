@@ -1,2 +1,0 @@
-<?xml version="1.0" ?>
-<table><name>asdf</name><columns><column id="0" name="qwer" type="str"/><column id="1" name="asdf" type="int"/></columns><data><row asdf="5" qwer="nha"/></data></table>

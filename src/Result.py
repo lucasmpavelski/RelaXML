@@ -1,10 +1,10 @@
-from Queriable import Queriable
 
 
-class Result (Queriable) :
+class Result(object) :
     
     def __init__ (self) :
-	self.data = []
+        self.data = []
+        self.col_names = []
 
     def setData (self, newData) :
 	data = newData
@@ -14,40 +14,54 @@ class Result (Queriable) :
 
     def clone (self, cloneData = True) :
 	r = Result()
-	r.columns = list(self.columns)
+	r.col_names = list(self.col_names)
 	if (cloneData) :
 	    r.data = list(self.data)
 	return r
 
-    def _tearColumn (self, line, col) :
-	del line[col]
+    def _tearColumns (self, line, cols) :
+        print line
+        print cols
+        print line.keys()[0], cols[0]
+        for col in cols :
+	    del line[col]
 	return line
 
     def select (self, columns = []) :
 	r = self.clone()
-	for col in self.columns :
-           if col not in columns : 
-               map(lambda x : self._tearColumn(x, col), r.data)
+        rem_cols = list(set(self.col_names) - set(columns))
+        self.col_names = list(set(columns) - set(self.col_names))
+        map(lambda x : self._tearColumns(x, rem_cols), r.data)
 	return r
 
     def orderBy (self, col) :
-        self.data.sort(key = (lambda x : x[col]))
-	return self
+	r = self.clone()
+        r.data.sort(key = (lambda x : x[col]))
+	return r
 
     def where (self, cond) :
 	r = self.clone()
-	for col in self.columns :
+	for col in self.col_names :
             cond = cond.replace(col, "x['" + col + "']")
 	r.data = filter(lambda x : eval(cond), r.data)
 	return r
 
     def join (self, table) :
+        if self.data == [] :
+            return table.clone()
+        elif table.data == [] :
+            return self.clone()
+
 	r = self.clone(cloneData = False)
 	for row1 in self.data :
             for row2 in table.data :
 		row = row1
                 row.update(row2)
-		r.data.append(row)
+                r.data.append(row)
+
+        r.col_names = self.col_names
+        r.col_names.extend(table.col_names)
+
 	return r
 
     def limit (self, size) :

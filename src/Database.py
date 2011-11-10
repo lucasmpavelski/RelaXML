@@ -4,6 +4,7 @@ import xml.dom.minidom as minidom
 from xml.dom.minidom import Document
 
 from Table import Table
+from Result import Result
 
 class Database :
 
@@ -101,9 +102,14 @@ class Database :
     def insertInto (self, tb_name, values) :
         self.tables[tb_name].insert(values)
 
+    def descTable (self, name) :
+        self.tables[tb_name]._live()
+        self.tables[tb_name].desc()
 
     def fromTables (self, tables) :
 	r = Result()
-	for t in tables :
-	   r.join(t)
+        for tn in tables :
+           t = self.tables[tn]
+           t._live()
+	   r = r.join(t)
 	return r

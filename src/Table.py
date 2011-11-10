@@ -29,14 +29,14 @@ class Table (Result) :
         self.location = location
         self.path = os.path.join(location, name + ".xml")
         self.columns = []
-        self.col_names = []
-
-        self.life = Timer(10, self._kill)
+        self.alive = False
 
         if (name + ".xml" not in os.listdir(location)) : #Finds a table on database directory.
             self._write() #If not, Creates a new tables.
         else :
             self._open() #If found, opens the tables.
+
+        #self.life = Timer(100, self._kill)
 
     def _save_xml (self) :
         """ Saves the tables configuration on XML. """
@@ -69,7 +69,7 @@ class Table (Result) :
 
     def _open (self) :
         """ Opens a existing table. """
-        self._live()
+        self.xml = minidom.parse(self.path)
         doc = self.xml
 
         self.name = doc.getElementsByTagName("name")[0].childNodes[0].data #Returns the table name. 
@@ -77,15 +77,34 @@ class Table (Result) :
         self.columns_xml = doc.getElementsByTagName("columns")[0]#Returns the node with the columns.
         self.col_n = len(self.columns_xml.childNodes)
         self.columns = [None] * self.col_n
+        self.col_names = [None] * self.col_n
 
         for col_e in self.columns_xml.childNodes : #Scroll through the columns.
             i = col_e.getAttribute("id")
             name = col_e.getAttribute("name") #Read name the columns.
             typen = col_e.getAttribute("type") #Read the type the columns.
 
-            self.columns[i] = Column(name, typen)
+            self.columns[int(i)] = Column(name, typen)
+            self.col_names[int(i)] = name
+
+        self._live()
+
+    def _validateColumnName (self, name) :
+        for cname in self.col_names :
+            if name in cname or cname in name :
+                raise ColumnExeption("The name " + name + " conficts with" + 
+                  " the existing name " + cname + ".")
+
+    def _validateColumnType (self, type_name):
+      if type_name not in ['int', 'str', 'float', 'long', 'complex',
+                           'type'] :
+          raise ColumnExeption("The type " + type_name + " is not allowed.")
 
     def setColumns (self, columns) :
+        for name, type_name in columns.iteritems() :
+            self._validateColumnName(name)
+            self._validateColumnType(type_name)
+
         for name, type_name in columns.iteritems() :
             self.columns.append(Column(name, type_name))
         self.col_n = len(columns)
@@ -101,12 +120,25 @@ class Table (Result) :
         self._save_xml()
 
     def _live (self) :
-        self.xml = minidom.parse(self.path)
-        self.data_xml = self.xml.getElementsByTagName("data")[0]
+        if not self.alive :
+            self.xml = minidom.parse(self.path)
+            self.data_xml = self.xml.getElementsByTagName("data")[0]
+
+            self.data = []
+            for i, row_e in enumerate(self.data_xml.childNodes) :
+                row = {}
+                for col in self.columns :
+                    k = col.name
+                    v = col.valueOf(row_e.getAttribute(col.ns_name))
+                    row[k] = v
+                self.data.append(row)
+            self.alive = True
 
     def _kill (self) :
         del self.data_xml
         del self.xml
+        del self.data
+        self.alive = False
 
     def desc (self) :
         """ Show table config. """
@@ -148,7 +180,7 @@ class Table (Result) :
 
         row = self.xml.createElement("row")
         for col, v in new_row.iteritems() :
-            row.setAttribute(self.columns[col].ns_name, str(v))
+            row.setAttribute(self._column(col).ns_name, str(v))
         self.data_xml.appendChild(row)
 
         self._save_xml()

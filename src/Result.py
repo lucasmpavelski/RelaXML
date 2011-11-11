@@ -20,9 +20,6 @@ class Result(object) :
 	return r
 
     def _tearColumns (self, line, cols) :
-        print line
-        print cols
-        print line.keys()[0], cols[0]
         for col in cols :
 	    del line[col]
 	return line

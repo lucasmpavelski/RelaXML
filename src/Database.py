@@ -100,11 +100,12 @@ class Database :
         return r
 
     def insertInto (self, tb_name, values) :
-        self.tables[tb_name].insert(values)
+        t = self.tables[tb_name]
+        t._live()
+        t.insert(values)
 
     def descTable (self, name) :
-        self.tables[tb_name]._live()
-        self.tables[tb_name].desc()
+        return self.tables[tb_name].desc()
 
     def fromTables (self, tables) :
 	r = Result()

@@ -36,7 +36,6 @@ class Table (Result) :
         else :
             self._open() #If found, opens the tables.
 
-        #self.life = Timer(100, self._kill)
 
     def _save_xml (self) :
         """ Saves the tables configuration on XML. """
@@ -133,6 +132,11 @@ class Table (Result) :
                     row[k] = v
                 self.data.append(row)
             self.alive = True
+        else :
+            self.life.cancel()
+
+        self.life = Timer(20, self._kill)
+        self.life.start()
 
     def _kill (self) :
         del self.data_xml

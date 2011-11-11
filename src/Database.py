@@ -2,9 +2,11 @@ import os
 import shutil
 import xml.dom.minidom as minidom
 from xml.dom.minidom import Document
+from threading import RLock
 
 from Table import Table
 from Result import Result
+from Transaction import transaction_with_lock
 
 class Database :
 
@@ -16,6 +18,9 @@ class Database :
         self.path = os.path.join(location, name)
         self.config_path = os.path.join(self.path, "config.xml")
         self.tables = {}
+        self.lock = None
+        self.log_path = os.path.join(self.path, "log")
+
         if (name not in os.listdir(location)) : #Search the Database directoty.
             self._write() #If not, create a new Database.
         else :
@@ -62,6 +67,9 @@ class Database :
             name = table_e.getAttribute("name") #Read name the tables.
             self.tables[name] = Table(name, self.path) #Creates a table object and adds the Hash table.
 
+    def threadSafeInit (self) :
+        self.lock = RLock()
+
     def drop (self) :
         """ Deletes the database directory. """
 
@@ -99,14 +107,23 @@ class Database :
             r = r + name + "\n"
         return r
 
+    def descTable (self, name) :
+        return self.tables[tb_name].desc()
+
+    @transaction_with_lock("lock", "log_path")
     def insertInto (self, tb_name, values) :
         t = self.tables[tb_name]
         t._live()
         t.insert(values)
 
-    def descTable (self, name) :
-        return self.tables[tb_name].desc()
+    @transaction_with_lock("lock", "log_path")
+    def deleteFrom (self, tb_name, where) :
+        t = self.tables[tb_name]
+        t._live()
+        r = t.where(where)
+        t.removeLines(r.data)
 
+    @transaction_with_lock("lock", "log_path")
     def fromTables (self, tables) :
 	r = Result()
         for tn in tables :

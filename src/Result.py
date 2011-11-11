@@ -16,7 +16,9 @@ class Result(object) :
 	r = Result()
 	r.col_names = list(self.col_names)
 	if (cloneData) :
-	    r.data = list(self.data)
+            r.data = []
+            for i, row in enumerate(self.data) :
+	       r.data.append(dict(self.data[i]))
 	return r
 
     def _tearColumns (self, line, cols) :
@@ -40,6 +42,8 @@ class Result(object) :
 	r = self.clone()
 	for col in self.col_names :
             cond = cond.replace(col, "x['" + col + "']")
+        print cond
+        print r.data
 	r.data = filter(lambda x : eval(cond), r.data)
 	return r
 

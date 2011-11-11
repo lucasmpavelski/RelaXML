@@ -77,4 +77,10 @@ class DBMS :
         return r
 
     def useDatabase (self, name) :
-        return self.databases[name]
+        d = self.databases[name]
+        return d
+
+    def useConcurrentDatabase (self, name) :
+        d = self.useDatabase(name)
+        d.threadSafeInit()
+        return d

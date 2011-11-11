@@ -188,3 +188,18 @@ class Table (Result) :
         self.data_xml.appendChild(row)
 
         self._save_xml()
+
+    def deleteRows (self, rows) :
+        for i, r in enumerate(self.data) :
+            if r in rows :
+                del self.data[i]
+
+        for row_e in self.data_xml.childNodes :
+            row = {}
+            for col in self.columns :
+                v = row_e.getAttribute(col.ns_name)
+                row[col.name] = col.valueOf(v)
+            if row in rows :
+                self.data_xml.removeChild(row_e)
+
+        self._save_xml()

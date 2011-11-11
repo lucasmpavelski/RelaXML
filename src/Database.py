@@ -121,7 +121,7 @@ class Database :
         t = self.tables[tb_name]
         t._live()
         r = t.where(where)
-        t.removeLines(r.data)
+        t.deleteRows(r.data)
 
     @transaction_with_lock("lock", "log_path")
     def fromTables (self, tables) :

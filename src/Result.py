@@ -28,9 +28,10 @@ class Result(object) :
 
     def select (self, columns = []) :
 	r = self.clone()
-        rem_cols = list(set(self.col_names) - set(columns))
-        self.col_names = list(set(columns) - set(self.col_names))
-        map(lambda x : self._tearColumns(x, rem_cols), r.data)
+        if columns != [] :
+          rem_cols = list(set(self.col_names) - set(columns))
+          self.col_names = list(set(columns) - set(self.col_names))
+          map(lambda x : self._tearColumns(x, rem_cols), r.data)
 	return r
 
     def orderBy (self, col) :
@@ -42,8 +43,6 @@ class Result(object) :
 	r = self.clone()
 	for col in self.col_names :
             cond = cond.replace(col, "x['" + col + "']")
-        print cond
-        print r.data
 	r.data = filter(lambda x : eval(cond), r.data)
 	return r
 

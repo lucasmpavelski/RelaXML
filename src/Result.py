@@ -3,16 +3,16 @@
 class Result(object) :
     
     def __init__ (self) :
+	""" Returns the results of queries. """
         self.data = []
         self.col_names = []
 
-    def setData (self, newData) :
-	data = newData
-
     def __getitem__ (self, n) :
+	""" Gets a row of data. """
 	return self.data[n]
 
     def clone (self, cloneData = True) :
+	""" Clones results. """
 	r = Result()
 	r.col_names = list(self.col_names)
 	if (cloneData) :
@@ -27,6 +27,7 @@ class Result(object) :
 	return line
 
     def select (self, columns = []) :
+	""" Selects a column from table. """
 	r = self.clone()
         if columns != [] :
           rem_cols = list(set(self.col_names) - set(columns))
@@ -35,11 +36,13 @@ class Result(object) :
 	return r
 
     def orderBy (self, col) :
+	""" Sort a column. """
 	r = self.clone()
         r.data.sort(key = (lambda x : x[col]))
 	return r
 
     def where (self, cond) :
+	""" Condition required. """
 	r = self.clone()
 	for col in self.col_names :
             cond = cond.replace(col, "x['" + col + "']")
@@ -47,6 +50,7 @@ class Result(object) :
 	return r
 
     def join (self, table) :
+	""" Makes the Cartesian product between the rows of the table. """
         if self.data == [] :
             return table.clone()
         elif table.data == [] :
@@ -65,9 +69,11 @@ class Result(object) :
 	return r
 
     def limit (self, size) :
+	""" Returns a number (size) of the results of table. """
 	return self.limit(0, size)
 
     def limit (self, lfrom, lto) :
+	""" Returns a number (range lfrom and lto) of the results of table. """
 	r = self.clone(cloneData = false)
 	r.data = self.data[lfrom:lto]
 	return r

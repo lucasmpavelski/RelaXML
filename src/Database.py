@@ -108,16 +108,21 @@ class Database :
         return r
 
     def descTable (self, name) :
+	""" Returns a String with the tables descriptions. """
+
         return self.tables[tb_name].desc()
 
     @transaction_with_lock("lock", "log_path")
     def insertInto (self, tb_name, values) :
+	""" Insert values ​​in the table. """
         t = self.tables[tb_name]
         t._live()
         t.insert(values)
 
     @transaction_with_lock("lock", "log_path")
     def deleteFrom (self, tb_name, where) :
+	""" Delete all the values which matches the conditions. """
+
         t = self.tables[tb_name]
         t._live()
         r = t.where(where)
@@ -125,6 +130,8 @@ class Database :
 
     @transaction_with_lock("lock", "log_path")
     def fromTables (self, tables) :
+	""" Join the tables. """
+
 	r = Result()
         for tn in tables :
            t = self.tables[tn]
@@ -134,6 +141,8 @@ class Database :
 
    @transaction_with_lock("lock", "log_path")
    def query (self, tables = [], where = "", columns = [])
+	""" Query database. """
+
 	ts = []
 	for tn in tables :
 	    r = Result()

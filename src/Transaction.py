@@ -2,6 +2,7 @@ from threading import RLock
 
 
 def transaction_with_lock(lock_name, log_name):
+	""" Decorate  as a unique method and stores the log. """
     def decorator(method):
         def synced_method(self, *args, **kws):
             lock = getattr(self, lock_name)

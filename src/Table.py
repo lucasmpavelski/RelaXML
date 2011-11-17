@@ -89,17 +89,20 @@ class Table (Result) :
         self._live()
 
     def _validateColumnName (self, name) :
+	""" Checks if the field name is unique. """
         for cname in self.col_names :
             if name in cname or cname in name :
                 raise ColumnExeption("The name " + name + " conficts with" + 
                   " the existing name " + cname + ".")
 
     def _validateColumnType (self, type_name):
+	""" Checks if the field Type is valid. """
       if type_name not in ['int', 'str', 'float', 'long', 'complex',
                            'type'] :
           raise ColumnExeption("The type " + type_name + " is not allowed.")
 
     def setColumns (self, columns) :
+	""" Initiates the columns from table. """
         for name, type_name in columns.iteritems() :
             self._validateColumnName(name)
             self._validateColumnType(type_name)
@@ -119,6 +122,7 @@ class Table (Result) :
         self._save_xml()
 
     def _live (self) :
+	""" Reloads a dead table. """
         if not self.alive :
             self.xml = minidom.parse(self.path)
             self.data_xml = self.xml.getElementsByTagName("data")[0]
@@ -139,6 +143,7 @@ class Table (Result) :
         self.life.start()
 
     def _kill (self) :
+	""" Kill  the table and frees memory. """
         del self.data_xml
         del self.xml
         del self.data
@@ -153,6 +158,7 @@ class Table (Result) :
         return r
 
     def _column(self, name) :
+	""" Add name to the column. """
         col = filter(lambda (x) : x.name == name, self.columns)
         if col == [] : 
             return None 
@@ -160,6 +166,7 @@ class Table (Result) :
             return col[0]
 
     def insert (self, values) :
+	""" Insert values in the tables. """
         cols = self.columns
         new_row = {}
 
@@ -190,6 +197,7 @@ class Table (Result) :
         self._save_xml()
 
     def deleteRows (self, rows) :
+	""" Deletes in the table, memory and XML. """
         for i, r in enumerate(self.data) :
             if r in rows :
                 del self.data[i]

@@ -24,6 +24,7 @@ class ColumnExeption (Exception):
 class Table (Result) :
 
     def __init__ (self, name, location) :
+	""" Initiates the tables. """
         super(Table, self).__init__()
         self.name = name
         self.location = location

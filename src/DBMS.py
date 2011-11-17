@@ -15,6 +15,7 @@ class DatabaseAlreadyExistError :
 class DBMS :
 
     def __init__ (self, name, location = ".") :
+	""" Initiates the database manager. """
         self.name = name
         self.location = location
         self.path = os.path.join(location, name)
@@ -26,11 +27,13 @@ class DBMS :
             self._open()
 
     def _save_config (self) :
+	""" Saves the settings of database manager. """
         config_file = open(self.config_path, 'w')
         self.config_xml.writexml(config_file)
         config_file.close()
 
     def _write (self) :
+	""" Writes the XML of the database manager. """
         os.mkdir(self.path)
         self.config_xml = Document()
 
@@ -43,6 +46,7 @@ class DBMS :
         self._save_config()
 
     def _open (self) :
+	""" Opens the database manager. """
         self.config_xml = minidom.parse(self.config_path)
         self.databases_xml = self.config_xml.getElementsByTagName("databases")[0]
 
@@ -52,9 +56,11 @@ class DBMS :
             self.databases[name] = Database(name, self.path)
     
     def clear (self) :
+	""" Deletes the setting of the database manager. """
         shutil.rmtree(self.path)
 
     def createDatabase (self, name) :
+	""" Creaets a new database. """
         if (name in self.databases.keys()) :
             raise DatabaseAlreadyExistError(name)
         d = Database(name, self.path)
@@ -67,20 +73,24 @@ class DBMS :
         self._save_config()
 
     def dropDatabase (self, name) :
+	""" Deletes the desired database. """
         self.databases[name].drop()
         del self.databases[name]
 
     def showDatabases (self) :
+	""" Shows all existing databases. """
         r = ""
         for name in self.databases.keys() :
             r = r + name + "\n"
         return r
 
     def useDatabase (self, name) :
+	""" Uses the desired database. """
         d = self.databases[name]
         return d
 
     def useConcurrentDatabase (self, name) :
+	""" Uses the database with concurrent control. """
         d = self.useDatabase(name)
         d.threadSafeInit()
         return d

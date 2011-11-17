@@ -131,3 +131,16 @@ class Database :
            t._live()
 	   r = r.join(t)
 	return r
+
+   @transaction_with_lock("lock", "log_path")
+   def query (self, tables = [], where = "", columns = [])
+	ts = []
+	for tn in tables :
+	    r = Result()
+	    r = r.join(self.tables).select(columns)
+	    ts.append(r)
+	r = Result()
+	for t in ts :
+	   r = r.join(t)
+	return r.where(where)
+

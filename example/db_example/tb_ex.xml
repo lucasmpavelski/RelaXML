@@ -1,1 +1,0 @@
-<?xml version="1.0" ?><table><name>tb_ex</name><columns><column id="0" name="favorite number" type="complex"/><column id="1" name="name" type="str"/></columns><data><row favorite_number="42j" name="Lucas"/></data></table>

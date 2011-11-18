@@ -1,18 +1,34 @@
+import os
+
 from DBMS import DBMS
 
-if __name__ == '__main__':
+def createEx () :
     dbms = DBMS('example', '.')
+    dbms.createDatabase("db_example")
+    db = dbms.useDatabase("db_example")
+    columns1 = {"t1id" : "int", "t1name" : "str", "t1phone" : "str"}
+    db.createTable("table1_ex", columns1)
+    columns2 = {"t2id" : "int", "t2name" : "str", "t2phone" : "str"}
+    db.createTable("table2_ex", columns2)
 
-    #dbms.createDatabase("db_example")
+def populate (db) :
+    db.insertInto("table1_ex", {"t1id": 0, "t1name": "joao", "t1phone": "6548-9874"})
+    db.insertInto("table1_ex", {"t1id": 1, "t1name": "jose", "t1phone": "6548-1513"})
+    db.insertInto("table1_ex", {"t1id": 2, "t1name": "jair", "t1phone": "4879-9899"})
+    db.insertInto("table1_ex", {"t1id": 3, "t1name": "jura", "t1phone": "7897-1111"})
+
+    db.insertInto("table2_ex", {"t2id": 0, "t2name": "ted" , "t2phone": "6548-9874"})
+    db.insertInto("table2_ex", {"t2id": 1, "t2name": "fred", "t2phone": "6548-1513"})
+    db.insertInto("table2_ex", {"t2id": 2, "t2name": "ned" , "t2phone": "1111-9899"})
+
+if __name__ == '__main__' :
+    
+    if 'example' not in os.listdir(".") :
+        createEx()
+    
+    dbms = DBMS('example', '.')
     db = dbms.useDatabase("db_example")
 
-    #columns = {"name" : "str", "favorite number" : "complex"}
-    #db.createTable("tb_ex", columns)
+    if len(db.tables["table1_ex"].data) == 0 :
+        populate(db)
 
-    print db.fromTables(["tb_ex"]).where("name == 'Lucas'").select(["favorite number"])[0]["favorite number"]
-    print db.fromTables(["tb_ex"]).where("name == 'Lucas'").select(["name"])[0]["name"]
-
-    print db.fromTables(["tb_ex"]).select().data
-    db.deleteFrom("tb_ex", "name == 'testst'")
-    print db.fromTables(["tb_ex"]).select().data
-    

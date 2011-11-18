@@ -1,0 +1,1 @@
+<?xml version="1.0" ?><table><name>table2_ex</name><columns><column id="0" name="t2id" type="int"/><column id="1" name="t2name" type="str"/><column id="2" name="t2phone" type="str"/></columns><data><row t2id="0" t2name="ted" t2phone="6548-9874"/><row t2id="1" t2name="fred" t2phone="6548-1513"/><row t2id="2" t2name="ned" t2phone="1111-9899"/></data></table>

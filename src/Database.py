@@ -63,7 +63,6 @@ class Database :
 
         self.tables_xml = doc.getElementsByTagName("tables")[0] #Returns the node with the tables.
         for table_e in self.tables_xml.childNodes : #Scroll through the tables.
-            print table_e.toprettyxml()
             name = table_e.getAttribute("name") #Read name the tables.
             self.tables[name] = Table(name, self.path) #Creates a table object and adds the Hash table.
 
@@ -114,7 +113,7 @@ class Database :
 
     @transaction_with_lock("lock", "log_path")
     def insertInto (self, tb_name, values) :
-	""" Insert values ​​in the table. """
+	""" Insert values in the table. """
         t = self.tables[tb_name]
         t._live()
         t.insert(values)
@@ -139,8 +138,8 @@ class Database :
 	   r = r.join(t)
 	return r
 
-   @transaction_with_lock("lock", "log_path")
-   def query (self, tables = [], where = "", columns = [])
+    @transaction_with_lock("lock", "log_path")
+    def query (self, tables = [], where = "", columns = []) :
 	""" Query database. """
 
 	ts = []

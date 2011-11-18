@@ -7,20 +7,6 @@ from Result import Result
 from Column import Column
 
 
-class ValueTypeExeption (Exception):
-    def __init__(self, value):
-        self.value = value
-    def __str__(self):
-        return repr(self.value)
-
-
-class ColumnExeption (Exception):
-    def __init__(self, value):
-        self.value = value
-    def __str__(self):
-        return repr(self.value)
-
-
 class Table (Result) :
 
     def __init__ (self, name, location) :
@@ -36,7 +22,6 @@ class Table (Result) :
             self._write() #If not, Creates a new tables.
         else :
             self._open() #If found, opens the tables.
-
 
     def _save_xml (self) :
         """ Saves the tables configuration on XML. """
@@ -93,14 +78,14 @@ class Table (Result) :
 	""" Checks if the field name is unique. """
         for cname in self.col_names :
             if name in cname or cname in name :
-                raise ColumnExeption("The name " + name + " conficts with" + 
+                raise Exception("The name " + name + " conficts with" + 
                   " the existing name " + cname + ".")
 
     def _validateColumnType (self, type_name):
 	""" Checks if the field Type is valid. """
-      if type_name not in ['int', 'str', 'float', 'long', 'complex',
-                           'type'] :
-          raise ColumnExeption("The type " + type_name + " is not allowed.")
+        if type_name not in ['int', 'str', 'float', 'long', 'complex',
+                             'type'] :
+            raise Exception("The type " + type_name + " is not allowed.")
 
     def setColumns (self, columns) :
 	""" Initiates the columns from table. """
@@ -176,9 +161,9 @@ class Table (Result) :
 
             for cnm, cval in values.iteritems() :
                 if cnm not in self.col_names :
-                    raise ColumnExeption("No column named " + cnm)
+                    raise Exception("No column named " + cnm)
                 elif not self._column(cnm).like(cval) :
-                    raise ValueTypeExeption("Wrong type for " + cnm)
+                    raise Exception("Wrong type for " + cnm)
 
                 new_row[cnm] = cval
 
@@ -186,7 +171,7 @@ class Table (Result) :
                 if c.name not in new_row.keys() :
                     new_row[c.name] = ""
         else :
-            raise TypeException("Insert values type error.")
+            raise Exception("Insert values type error. They must be a dict.")
 
         self.data.append(new_row)
 

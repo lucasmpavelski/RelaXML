@@ -5,11 +5,11 @@ from xml.dom.minidom import Document
 
 from Database import Database
 
-class DatabaseAlreadyExistError :
+class DatabaseNotFoundException (Exception) :
     def __init__(self, name):
         self.name = name
     def __str__(self):
-        return "Database " + name + " already exists."
+        return "No database with name " + self.name + "."
      
 
 class DBMS :
@@ -47,6 +47,7 @@ class DBMS :
 
     def _open (self) :
 	""" Opens the database manager. """
+
         self.config_xml = minidom.parse(self.config_path)
         self.databases_xml = self.config_xml.getElementsByTagName("databases")[0]
 
@@ -57,12 +58,13 @@ class DBMS :
     
     def clear (self) :
 	""" Deletes the setting of the database manager. """
+
         shutil.rmtree(self.path)
 
     def createDatabase (self, name) :
-	""" Creaets a new database. """
+	""" Creates a new database. """
         if (name in self.databases.keys()) :
-            raise DatabaseAlreadyExistError(name)
+            raise Exception("The database " + name + " already exists.")
         d = Database(name, self.path)
         self.databases[name] = d
 
@@ -74,6 +76,8 @@ class DBMS :
 
     def dropDatabase (self, name) :
 	""" Deletes the desired database. """
+        if name not in self.databases.keys() :
+            raise DatabaseNotFoundException(name)
         self.databases[name].drop()
         del self.databases[name]
 
@@ -85,6 +89,8 @@ class DBMS :
         return r
 
     def useDatabase (self, name) :
+        if (name not in self.databases.keys()) :
+            raise DatabaseNotFoundException(name)
 	""" Uses the desired database. """
         d = self.databases[name]
         return d

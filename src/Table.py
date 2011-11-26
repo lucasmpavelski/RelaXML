@@ -171,7 +171,8 @@ class Table (Result) :
                 if c.name not in new_row.keys() :
                     new_row[c.name] = ""
         else :
-            raise Exception("Insert values type error. They must be a dict.")
+            raise Exception("Insert values type error. Got " +
+                type(values).__name__ + " instead of dict.")
 
         self.data.append(new_row)
 

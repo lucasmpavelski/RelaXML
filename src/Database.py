@@ -94,13 +94,11 @@ class Database :
         for f in self.tables_xml.childNodes :
             if f.getAttribute("name") == name :
                 self.tables_xml.removeChild(f)
-
         os.remove(self.tables[name].path)
         del self.tables[name]
 
     def showTables (self) :
         """ Shows existing tables. """
-
         r = ""
         for name in self.tables.keys() : #Scroll through the tables.
             r = r + name + "\n"
@@ -121,16 +119,25 @@ class Database :
     @transaction_with_lock("lock", "log_path")
     def deleteFrom (self, tb_name, where) :
 	""" Delete all the values which matches the conditions. """
-
         t = self.tables[tb_name]
         t._live()
         r = t.where(where)
         t.deleteRows(r.data)
 
     @transaction_with_lock("lock", "log_path")
+    def update (self, tb_name, where, values) :
+	""" Update all the values which matches the conditions. """
+        t = self.tables[tb_name]
+        t._live()
+        r = t.where(where)
+        t.deleteRows(r.data)
+        for row in r :
+            row.update(values) 
+            t.insert(row)
+
+    @transaction_with_lock("lock", "log_path")
     def fromTables (self, tables) :
 	""" Join the tables. """
-
 	r = Result()
         for tn in tables :
            t = self.tables[tn]
@@ -141,7 +148,6 @@ class Database :
     @transaction_with_lock("lock", "log_path")
     def query (self, tables = [], where = "", columns = []) :
 	""" Query database. """
-
 	ts = []
 	for tn in tables :
 	    r = Result()

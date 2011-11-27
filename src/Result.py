@@ -76,4 +76,16 @@ class Result(object) :
 	""" Returns a number (range lfrom and lto) of the results of table. """
 	r = self.clone(cloneData = false)
 	r.data = self.data[lfrom:lto]
-	return r
+        return r
+
+    def min_value (self, col) :
+        if self.data :
+           return min(self.data, key = lambda x : x[col])[col]
+        else :
+           return 0
+
+    def max_value (self, col) :
+        if self.data :
+           return max(self.data, key = lambda x : x[col])[col]
+        else :
+           return 0

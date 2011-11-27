@@ -84,7 +84,7 @@ class Table (Result) :
     def _validateColumnType (self, type_name):
 	""" Checks if the field Type is valid. """
         if type_name not in ['int', 'str', 'float', 'long', 'complex',
-                             'type'] :
+                             'type', 'unicode'] :
             raise Exception("The type " + type_name + " is not allowed.")
 
     def setColumns (self, columns) :
@@ -163,7 +163,9 @@ class Table (Result) :
                 if cnm not in self.col_names :
                     raise Exception("No column named " + cnm)
                 elif not self._column(cnm).like(cval) :
-                    raise Exception("Wrong type for " + cnm)
+                    raise Exception("Wrong type for " + cnm + 
+                        " got " + type(cval).__name__ + " instead of " +
+                        self._column(cnm).typeName)
 
                 new_row[cnm] = cval
 

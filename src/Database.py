@@ -74,8 +74,13 @@ class Database :
 
         shutil.rmtree(self.path)
 
+    def hasTable (self, name) :
+        return name in self.tables.keys()
+
     def createTable (self, name, columns) :
         """ Creates tables on database."""
+        if self.hasTable(name) :
+            raise Exception("The table " + name + " already exists.")
 
         doc = self.config_xml
 
